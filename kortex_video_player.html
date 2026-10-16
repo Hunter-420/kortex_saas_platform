@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Kortex AI — Enterprise Multi-Agent SaaS Video Presentation</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body, html {
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      background-color: #06080E;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", sans-serif;
+      position: relative;
+      color: #F8FAFC;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Cinematic Camera Rig */
+    #cameraViewport {
+      width: 1920px;
+      height: 1080px;
+      position: relative;
+      overflow: hidden;
+      perspective: 1400px;
+    }
+
+    #cameraRig {
+      width: 1920px;
+      height: 1080px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      transform-origin: 50% 50%;
+      transform-style: preserve-3d;
+      transition: transform 0.05s linear;
+    }
+
+    /* Embedded Web Application Frame */
+    #webFrame {
+      width: 1920px;
+      height: 1080px;
+      border: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: #06080E;
+    }
+
+    /* Ambient Spotlight Glow that follows the camera */
+    #ambientGlow {
+      position: absolute;
+      width: 700px;
+      height: 700px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0, 242, 254, 0.12) 0%, rgba(99, 102, 241, 0.06) 45%, transparent 70%);
+      pointer-events: none;
+      z-index: 99990;
+      transform: translate(-50%, -50%);
+      mix-blend-mode: screen;
+      filter: blur(40px);
+    }
+
+    /* Top Floating Branding Badge */
+    #topBadge {
+      position: absolute;
+      top: 24px;
+      left: 36px;
+      z-index: 99995;
+      background: rgba(10, 15, 29, 0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(0, 242, 254, 0.3);
+      border-radius: 999px;
+      padding: 8px 22px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 242, 254, 0.15);
+    }
+
+    .badge-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #10B981;
+      box-shadow: 0 0 10px #10B981;
+    }
+
+    .badge-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: #FFFFFF;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .badge-sub {
+      color: #00F2FE;
+      font-size: 13px;
+      font-weight: 600;
+      border-left: 1px solid rgba(255, 255, 255, 0.2);
+      padding-left: 12px;
+    }
+
+    /* Virtual Mouse Cursor */
+    #cursor {
+      position: absolute;
+      top: 200px;
+      left: 300px;
+      width: 32px;
+      height: 32px;
+      z-index: 999999;
+      pointer-events: none;
+      filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.6));
+      transform: translate(-2px, -2px);
+      transition: transform 0.12s ease;
+    }
+
+    #cursor.click {
+      transform: translate(-2px, -2px) scale(0.85);
+    }
+
+    /* Tactile Click Ripple */
+    .click-ripple {
+      position: absolute;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: 2px solid #00F2FE;
+      background: rgba(0, 242, 254, 0.25);
+      transform: translate(-50%, -50%) scale(0.2);
+      opacity: 1;
+      pointer-events: none;
+      z-index: 999998;
+      animation: rippleAnim 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes rippleAnim {
+      to {
+        transform: translate(-50%, -50%) scale(1.8);
+        opacity: 0;
+      }
+    }
+
+    /* Motion Graphics Lower Third */
+    #lowerThird {
+      position: absolute;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(0);
+      background: rgba(8, 12, 22, 0.94);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(0, 242, 254, 0.35);
+      border-radius: 18px;
+      padding: 14px 30px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      z-index: 99995;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), 0 0 30px rgba(0, 242, 254, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+      max-width: 90%;
+    }
+
+    #lowerThird.hide {
+      transform: translateX(-50%) translateY(140px);
+      opacity: 0;
+    }
+
+    .lt-icon-wrap {
+      width: 48px;
+      height: 48px;
+      border-radius: 13px;
+      background: linear-gradient(135deg, rgba(0, 242, 254, 0.2) 0%, rgba(99, 102, 241, 0.3) 100%);
+      border: 1px solid rgba(0, 242, 254, 0.5);
+      color: #00F2FE;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 6px 20px rgba(0, 242, 254, 0.25);
+    }
+
+    .lt-icon-wrap svg {
+      width: 24px;
+      height: 24px;
+      stroke: #00F2FE;
+    }
+
+    .lt-content {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .lt-tag {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #00F2FE;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .lt-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: #FFFFFF;
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+    }
+
+    .lt-desc {
+      font-size: 13px;
+      color: #94A3B8;
+      font-weight: 500;
+    }
+
+    /* =========================================================
+       SCENE 5: Cross-Device Desktop + iPhone 15 Pro Showcase
+       ========================================================= */
+    #mobileScene {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 1920px;
+      height: 1080px;
+      background: radial-gradient(ellipse at 70% 50%, rgba(99, 102, 241, 0.15) 0%, rgba(6, 8, 14, 0.98) 70%), #06080E;
+      z-index: 99997;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 100px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.5s ease;
+    }
+
+    #mobileScene.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* Left Side: Desktop Perspective Card */
+    .desktop-preview-card {
+      width: 1040px;
+      height: 640px;
+      background: #0B0F19;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 16px;
+      box-shadow: 0 40px 90px rgba(0, 0, 0, 0.8), 0 0 40px rgba(0, 242, 254, 0.1);
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .desktop-preview-bar {
+      height: 42px;
+      background: #0D1322;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+    }
+
+    .desktop-dots {
+      display: flex;
+      gap: 7px;
+    }
+
+    .desktop-dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+    }
+
+    .desktop-url {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: #94A3B8;
+      background: rgba(255, 255, 255, 0.04);
+      padding: 4px 20px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .desktop-preview-frame {
+      width: 1920px;
+      height: 1080px;
+      border: none;
+      transform: scale(0.5416);
+      transform-origin: top left;
+    }
+
+    /* Right Side: Realistic iPhone 15 Pro Chassis */
+    .phone-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .phone-mockup {
+      width: 380px;
+      height: 770px;
+      background: #000000;
+      border-radius: 56px;
+      box-shadow: 0 40px 100px rgba(0, 0, 0, 0.85), 0 0 0 12px #1E2330, 0 0 0 14px #333D52;
+      overflow: hidden;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .phone-dynamic-island {
+      position: absolute;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 116px;
+      height: 28px;
+      background: #000000;
+      border-radius: 20px;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+    }
+
+    .phone-island-cam {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #080D1A;
+      border: 1px solid #1E293B;
+    }
+
+    .phone-island-sensor {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #050811;
+    }
+
+    .phone-iframe {
+      width: 390px;
+      height: 780px;
+      border: none;
+      transform: scale(0.974);
+      transform-origin: top left;
+      background: #06080E;
+    }
+
+    /* Touch Tap Indicator Bubble */
+    #touchIndicator {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(0, 242, 254, 0.4);
+      border: 2px solid #00F2FE;
+      transform: translate(-50%, -50%) scale(0);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 101;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    #touchIndicator.active {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+    }
+
+    .phone-badges-row {
+      display: flex;
+      gap: 12px;
+    }
+
+    .phone-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(0, 242, 254, 0.08);
+      border: 1px solid rgba(0, 242, 254, 0.25);
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #00F2FE;
+    }
+
+    .phone-badge svg {
+      width: 14px;
+      height: 14px;
+      stroke: #00F2FE;
+    }
+
+    /* =========================================================
+       SCENE 6: High-Converting Fiverr Outro & Call to Action
+       (Strict Zero Emojis · 100% Crisp Vector SVG Icons)
+       ========================================================= */
+    #outroScene {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 1920px;
+      height: 1080px;
+      background: 
+        radial-gradient(circle at 50% 30%, rgba(99, 102, 241, 0.18) 0%, transparent 60%),
+        radial-gradient(circle at 80% 70%, rgba(0, 242, 254, 0.12) 0%, transparent 50%),
+        #06080E;
+      z-index: 999999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      opacity: 0;
+      visibility: hidden;
+      padding: 0 100px;
+      transition: opacity 0.5s ease;
+    }
+
+    #outroScene.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .fiverr-badge-pill {
+      background: rgba(29, 191, 115, 0.12);
+      border: 1.5px solid #1DBF73;
+      color: #1DBF73;
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 9px 28px;
+      border-radius: 999px;
+      margin-bottom: 24px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 0 25px rgba(29, 191, 115, 0.25);
+    }
+
+    .fiverr-badge-pill svg {
+      width: 18px;
+      height: 18px;
+      fill: #1DBF73;
+    }
+
+    .outro-title {
+      font-size: 48px;
+      font-weight: 800;
+      color: #FFFFFF;
+      letter-spacing: -0.025em;
+      line-height: 1.15;
+      margin-bottom: 16px;
+      max-width: 1100px;
+    }
+
+    .outro-title span {
+      background: linear-gradient(135deg, #00F2FE 0%, #4FACFE 50%, #6366F1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .outro-subtitle {
+      font-size: 17.5px;
+      color: #94A3B8;
+      max-width: 880px;
+      line-height: 1.6;
+      margin-bottom: 38px;
+      font-weight: 500;
+    }
+
+    .outro-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 26px;
+      max-width: 1220px;
+      margin-bottom: 42px;
+      width: 100%;
+    }
+
+    .outro-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: 18px;
+      padding: 26px 24px;
+      text-align: left;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .outro-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #00F2FE, #6366F1);
+    }
+
+    .outro-card-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(0, 242, 254, 0.1);
+      border: 1px solid rgba(0, 242, 254, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      color: #00F2FE;
+    }
+
+    .outro-card-icon svg {
+      width: 22px;
+      height: 22px;
+      stroke: #00F2FE;
+    }
+
+    .outro-card h4 {
+      color: #FFFFFF;
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .outro-card p {
+      color: #94A3B8;
+      font-size: 13.5px;
+      line-height: 1.55;
+    }
+
+    .outro-cta-btn {
+      background: #1DBF73;
+      color: #06080E;
+      font-size: 18px;
+      font-weight: 800;
+      padding: 18px 52px;
+      border-radius: 999px;
+      text-decoration: none;
+      box-shadow: 0 14px 40px rgba(29, 191, 115, 0.4), 0 0 20px rgba(29, 191, 115, 0.2);
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      letter-spacing: 0.02em;
+    }
+
+    .outro-cta-btn svg {
+      width: 20px;
+      height: 20px;
+      stroke: #06080E;
+      stroke-width: 2.5;
+    }
+
+    .seller-credit-bar {
+      margin-top: 28px;
+      font-size: 14.5px;
+      color: #64748B;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .seller-credit-bar strong {
+      color: #F8FAFC;
+    }
+
+    .seller-credit-link {
+      color: #00F2FE;
+      text-decoration: none;
+      border-bottom: 1px dotted rgba(0, 242, 254, 0.4);
+    }
+  </style>
+</head>
+<body>
+  <div id="cameraViewport">
+    <div id="cameraRig">
+      <!-- Web Application Iframe -->
+      <iframe id="webFrame" src="index.html"></iframe>
+    </div>
+
+    <!-- Ambient Follow Spotlight -->
+    <div id="ambientGlow"></div>
+
+    <!-- Top Floating SaaS Project Badge -->
+    <div id="topBadge">
+      <div class="badge-dot"></div>
+      <div class="badge-title">Full-Stack SaaS Platform</div>
+      <div class="badge-sub">Kortex AI · Multi-Agent Orchestrator</div>
+    </div>
+
+    <!-- High-Precision Mouse Pointer -->
+    <div id="cursor">
+      <svg viewBox="0 0 24 24" width="32" height="32" fill="#00F2FE" stroke="#06080E" stroke-width="1.5">
+        <path d="M4 3l15 11-7 1-4 6-2-1 4-6-6-1z"/>
+      </svg>
+    </div>
+
+    <!-- Agency-Grade Lower Third -->
+    <div id="lowerThird">
+      <div class="lt-icon-wrap" id="ltIcon">
+        <!-- Injected via JS based on active scene -->
+      </div>
+      <div class="lt-content">
+        <div class="lt-tag" id="ltTag">ENTERPRISE AI SAAS ARCHITECTURE</div>
+        <div class="lt-title" id="ltTitle">Autonomous Multi-Agent Swarm Orchestrator</div>
+        <div class="lt-desc" id="ltDesc">DAG Execution Pipelines · Real-Time Token Telemetry · Multi-Model Streaming</div>
+      </div>
+    </div>
+
+    <!-- Scene 5: Cross-Device Desktop + iPhone 15 Pro Showcase -->
+    <div id="mobileScene">
+      <!-- Left: Angled Desktop Studio Preview -->
+      <div class="desktop-preview-card">
+        <div class="desktop-preview-bar">
+          <div class="desktop-dots">
+            <div class="desktop-dot" style="background: #EF4444;"></div>
+            <div class="desktop-dot" style="background: #F59E0B;"></div>
+            <div class="desktop-dot" style="background: #10B981;"></div>
+          </div>
+          <div class="desktop-url">https://kortex.ai/studio/workspace</div>
+          <div style="font-size: 11px; color: #10B981; font-weight: 700; display: flex; align-items: center; gap: 5px;">
+            <span style="width: 6px; height: 6px; border-radius: 50%; background: #10B981;"></span> 34ms EDGE
+          </div>
+        </div>
+        <img id="desktopPreviewImg" src="gallery_and_assets/01_desktop_hero_showcase.jpg" style="width: 1040px; height: 598px; object-fit: cover; border: none; display: block;">
+      </div>
+
+      <!-- Right: Sleek iPhone 15 Pro Mockup -->
+      <div class="phone-container">
+        <div class="phone-mockup">
+          <div class="phone-dynamic-island">
+            <div class="phone-island-cam"></div>
+            <div class="phone-island-sensor"></div>
+          </div>
+          <div id="touchIndicator"></div>
+          <iframe id="phoneFrame" class="phone-iframe" src="index.html"></iframe>
+        </div>
+        <div class="phone-badges-row">
+          <div class="phone-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Lighthouse 98+</span>
+          </div>
+          <div class="phone-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Touch-Optimized</span>
+          </div>
+          <div class="phone-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Zero CLS</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scene 6: Fiverr Exclusive Outro Slide -->
+    <div id="outroScene">
+      <div class="fiverr-badge-pill">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+        <span>AVAILABLE EXCLUSIVELY ON FIVERR</span>
+      </div>
+
+      <h1 class="outro-title">Ready to Launch Your Production-Grade <span>AI SaaS Platform?</span></h1>
+      <p class="outro-subtitle">From custom LLM swarms to Stripe subscription billing, get a turnkey, enterprise-ready codebase tailored to your exact business specifications.</p>
+
+      <div class="outro-grid">
+        <div class="outro-card">
+          <div class="outro-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          </div>
+          <h4>100% Commercial Source Code</h4>
+          <p>Full GitHub repository ownership. Modular TypeScript, Python API connectors, Tailwind CSS, zero vendor lock-in.</p>
+        </div>
+
+        <div class="outro-card">
+          <div class="outro-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+          </div>
+          <h4>Fixed-Price Scope &amp; Fast Turnaround</h4>
+          <p>Milestone-based delivery with zero surprise costs. Daily staged interactive preview links updated every 24 hours.</p>
+        </div>
+
+        <div class="outro-card">
+          <div class="outro-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+          </div>
+          <h4>1-Click Multi-Cloud Deployment</h4>
+          <p>Pre-configured CI/CD workflows for Vercel, Supabase, Docker, Pinecone vector stores, and GitHub Pages.</p>
+        </div>
+      </div>
+
+      <div class="outro-cta-btn">
+        <span>ORDER NOW ON FIVERR</span>
+        <svg viewBox="0 0 24 24" fill="none"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </div>
+
+      <div class="seller-credit-bar">
+        <span>Professional Full-Stack AI Engineer: <strong>Nischal K. (@nischalkhanal98)</strong></span>
+        <span>•</span>
+        <a class="seller-credit-link" href="https://www.instagram.com/nischal_khanal1/" target="_blank">Instagram: @nischal_khanal1</a>
+        <span>•</span>
+        <span>Verified Google OAuth 2.0 &amp; SOC-2 ZDR</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const cameraRig = document.getElementById('cameraRig');
+    const ambientGlow = document.getElementById('ambientGlow');
+    const cursor = document.getElementById('cursor');
+    const topBadge = document.getElementById('topBadge');
+    const lowerThird = document.getElementById('lowerThird');
+    const ltIcon = document.getElementById('ltIcon');
+    const ltTag = document.getElementById('ltTag');
+    const ltTitle = document.getElementById('ltTitle');
+    const ltDesc = document.getElementById('ltDesc');
+    const mobileScene = document.getElementById('mobileScene');
+    const outroScene = document.getElementById('outroScene');
+    const webFrame = document.getElementById('webFrame');
+    const touchIndicator = document.getElementById('touchIndicator');
+
+    let innerDoc = null;
+    let innerWin = null;
+
+    webFrame.onload = () => {
+      try {
+        innerDoc = webFrame.contentDocument || webFrame.contentWindow.document;
+        innerWin = webFrame.contentWindow;
+      } catch (e) {
+        console.error('Frame error:', e);
+      }
+    };
+
+    function spawnRipple(x, y) {
+      const rip = document.createElement('div');
+      rip.className = 'click-ripple';
+      rip.style.left = x + 'px';
+      rip.style.top = y + 'px';
+      document.getElementById('cameraViewport').appendChild(rip);
+      setTimeout(() => rip.remove(), 450);
+    }
+
+    function setCursor(x, y, clicking = false) {
+      cursor.style.left = x + 'px';
+      cursor.style.top = y + 'px';
+      ambientGlow.style.left = x + 'px';
+      ambientGlow.style.top = y + 'px';
+      if (clicking) {
+        cursor.classList.add('click');
+        spawnRipple(x, y);
+      } else {
+        cursor.classList.remove('click');
+      }
+    }
+
+    function setCamera(scale = 1.0, rotX = 0, rotY = 0, transX = 0, transY = 0) {
+      cameraRig.style.transform = `scale(${scale}) rotateX(${rotX}deg) rotateY(${rotY}deg) translate3d(${transX}px, ${transY}px, 0)`;
+    }
+
+    const SVG_ICONS = {
+      dag: `<svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><circle cx="12" cy="18" r="3"/><line x1="8.5" y1="7.5" x2="10.5" y2="15.5"/><line x1="15.5" y1="7.5" x2="13.5" y2="15.5"/></svg>`,
+      code: `<svg viewBox="0 0 24 24" fill="none" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>`,
+      telemetry: `<svg viewBox="0 0 24 24" fill="none" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>`,
+      pricing: `<svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>`,
+      device: `<svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>`
+    };
+
+    function setLowerThird(iconKey, tag, title, desc, show = true) {
+      if (!show) {
+        lowerThird.classList.add('hide');
+        return;
+      }
+      lowerThird.classList.remove('hide');
+      if (SVG_ICONS[iconKey]) ltIcon.innerHTML = SVG_ICONS[iconKey];
+      ltTag.textContent = tag;
+      ltTitle.textContent = title;
+      ltDesc.textContent = desc;
+    }
+
+    // Smooth step easing
+    function smoothstep(min, max, value) {
+      const x = Math.max(0, Math.min(1, (value - min) / (max - min)));
+      return x * x * (3 - 2 * x);
+    }
+
+    // Master Timeline Function called by render engine (0.0s to 50.0s)
+    window.seekTo = function(t) {
+      if (!innerDoc || !innerWin) {
+        try {
+          innerDoc = webFrame.contentDocument || webFrame.contentWindow.document;
+          innerWin = webFrame.contentWindow;
+        } catch (e) {}
+      }
+
+      // Reset state for main view
+      if (t < 35.0) {
+        webFrame.style.display = 'block';
+        cameraRig.style.display = 'block';
+        topBadge.style.display = 'flex';
+        lowerThird.style.display = 'flex';
+        cursor.style.display = 'block';
+        mobileScene.classList.remove('active');
+        mobileScene.style.display = 'none';
+        outroScene.classList.remove('active');
+        outroScene.style.display = 'none';
+      }
+
+      // ====================================================================
+      // SCENE 1: (0.0s - 8.5s) Hero Section & Developer Studio Swarm DAG
+      // ====================================================================
+      if (t >= 0 && t < 8.5) {
+        if (innerWin) innerWin.scrollTo(0, 0);
+
+        setLowerThird(
+          'dag',
+          'ENTERPRISE AI SAAS ARCHITECTURE',
+          'Autonomous Multi-Agent Swarm Orchestrator',
+          'DAG Execution Pipelines · Real-Time Token Telemetry · Multi-Model Streaming'
+        );
+
+        if (t < 2.5) {
+          const p = t / 2.5;
+          const s = 1.0 + p * 0.04;
+          setCamera(s, (1 - p) * 1.5, (1 - p) * -1, 0, 0);
+          setCursor(1400 - p * 500, 180 + p * 480);
+        } else if (t >= 2.5 && t < 4.8) {
+          // Hover and click tab
+          const p = (t - 2.5) / 2.3;
+          setCamera(1.04, 0, 0, 0, 0);
+          setCursor(900 + p * 80, 663);
+          if (t >= 4.5 && t < 4.8) {
+            setCursor(980, 663, true);
+          }
+        } else {
+          // Glide across DAG cards (590 to 1180, 850)
+          const p = (t - 4.8) / 3.7;
+          setCamera(1.05, 0.8, -0.4, -p * 15, -p * 10);
+          setCursor(590 + p * 600, 850 + Math.sin(p * Math.PI) * 15);
+        }
+      }
+
+      // ====================================================================
+      // SCENE 2: (8.5s - 18.0s) Interactive AI Playground & Token Streaming
+      // ====================================================================
+      else if (t >= 8.5 && t < 18.0) {
+        setLowerThird(
+          'code',
+          'PRODUCTION-GRADE AI WORKBENCH',
+          'Streaming Code Generation with AST Verification',
+          'Pinecone Vector RAG · Real-Time Output · Sandboxed Code Safety'
+        );
+
+        // Smooth scroll to playground (1380 offset places prompt and run button perfectly)
+        const scrollP = smoothstep(8.5, 10.5, t);
+        if (innerWin) innerWin.scrollTo(0, scrollP * 1380);
+
+        if (t >= 8.5 && t < 11.0) {
+          const p = (t - 8.5) / 2.5;
+          setCamera(1.03, 0, 0, 0, 0);
+          setCursor(1190 - p * 300, 850 - p * 50);
+        } else if (t >= 11.0 && t < 14.5) {
+          // Focus prompt input and type prompt
+          setCamera(1.06, 0, 0, 0, -25);
+          setCursor(850, 830);
+          if (t >= 11.0 && t < 11.3) {
+            setCursor(850, 830, true);
+          }
+
+          // Simulate live typing
+          const promptText = "Build autonomous webhook handler with vector search & Stripe credits";
+          const typeP = Math.min(1, (t - 11.3) / 2.8);
+          const chars = Math.floor(typeP * promptText.length);
+          if (innerDoc) {
+            const promptInput = innerDoc.getElementById('promptInput') || innerDoc.querySelector('input.prompt-input');
+            if (promptInput) promptInput.value = promptText.slice(0, chars);
+          }
+        } else {
+          // Click "Run Engine" button (x = 1440, y = 830)
+          const p = (t - 14.5) / 3.5;
+          setCamera(1.06, 0, 0, 0, -35);
+          if (t >= 14.5 && t < 15.0) {
+            setCursor(1440, 830, true);
+            if (innerDoc) {
+              const runBtn = innerDoc.getElementById('runEngineBtn');
+              if (runBtn && !runBtn.dataset.clicked) {
+                runBtn.dataset.clicked = "true";
+                runBtn.click();
+              }
+            }
+          } else {
+            setCursor(1440 - p * 250, 750 + p * 30);
+          }
+        }
+      }
+
+      // ====================================================================
+      // SCENE 3: (18.0s - 26.0s) Asymmetric Bento Grid & 34ms Edge Telemetry
+      // ====================================================================
+      else if (t >= 18.0 && t < 26.0) {
+        setLowerThird(
+          'telemetry',
+          'ENTERPRISE PERFORMANCE & INFRASTRUCTURE',
+          'Global Low-Latency Edge Routing & SOC-2 ZDR',
+          '34ms Global P99 Latency · 99.99% Multi-Cloud SLA · Zero Data Retention'
+        );
+
+        // Smooth scroll to bento
+        const scrollP = smoothstep(18.0, 20.0, t);
+        if (innerWin) innerWin.scrollTo(0, 1380 + scrollP * 1100);
+
+        if (t >= 18.0 && t < 21.0) {
+          const p = (t - 18.0) / 3.0;
+          setCamera(1.03, 1, -0.8, 0, 0);
+          setCursor(1190 - p * 400, 780 - p * 280);
+        } else if (t >= 21.0 && t < 23.5) {
+          // Glide over radar chart
+          const p = (t - 21.0) / 2.5;
+          setCamera(1.05, 0, 0, -20, 0);
+          setCursor(790 + p * 200, 480 + Math.sin(p * Math.PI) * 30);
+        } else {
+          // Glide over latency card
+          const p = (t - 23.5) / 2.5;
+          setCamera(1.04, 0, 0, 20, 0);
+          setCursor(990 + p * 300, 520);
+        }
+      }
+
+      // ====================================================================
+      // SCENE 4: (26.0s - 35.0s) Dynamic Token Slider & Client ROI Calculator
+      // ====================================================================
+      else if (t >= 26.0 && t < 35.0) {
+        setLowerThird(
+          'pricing',
+          'CLIENT MONETIZATION & TOKEN BILLING',
+          'Dynamic Usage Volume & Transparent ROI Calculator',
+          'Stripe Integration · Real-Time Margin Analysis · Multi-Tier Subscriptions'
+        );
+
+        // Scroll to pricing section (3720 places toggle, slider, and cards in view)
+        const scrollP = smoothstep(26.0, 28.0, t);
+        if (innerWin) innerWin.scrollTo(0, 2480 + scrollP * 1240);
+
+        if (t >= 26.0 && t < 28.5) {
+          const p = (t - 26.0) / 2.5;
+          setCamera(1.04, 0, 0, 0, 0);
+          setCursor(1290 - p * 700, 520 - p * 43);
+        } else if (t >= 28.5 && t < 32.5) {
+          // Drag the ROI Token Slider!
+          // Slider begins at x = 538, w = 844, y = 477
+          const dragP = (t - 28.5) / 4.0;
+          setCamera(1.06, 0, 0, 0, -15);
+          const sliderX = 538 + dragP * 650;
+          setCursor(sliderX, 477, true);
+
+          // Update slider value in inner document
+          if (innerDoc) {
+            const range = innerDoc.getElementById('roiTokenSlider');
+            if (range) {
+              const minVal = 150000;
+              const maxVal = 5000000;
+              const curVal = Math.round(minVal + dragP * (maxVal - minVal));
+              range.value = curVal;
+              range.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+          }
+        } else {
+          // Move up and click Annual Billing Toggle (x = 920, y = 164)
+          const p = (t - 32.5) / 2.5;
+          setCamera(1.04, 0, 0, 0, 0);
+          setCursor(1188 - p * 268, 477 - p * 313);
+          if (t >= 34.2 && t < 34.6) {
+            setCursor(920, 164, true);
+            if (innerDoc) {
+              const toggle = innerDoc.getElementById('billingToggle');
+              if (toggle && !toggle.dataset.switched) {
+                toggle.dataset.switched = "true";
+                toggle.click();
+              }
+            }
+          }
+        }
+      }
+
+      // ====================================================================
+      // SCENE 5: (35.0s - 42.0s) 100% Cross-Device Responsiveness (PC + iPhone 15 Pro)
+      // ====================================================================
+      else if (t >= 35.0 && t < 42.0) {
+        cursor.style.display = 'none';
+        cameraRig.style.display = 'none';
+        webFrame.style.display = 'none';
+        topBadge.style.display = 'none';
+        outroScene.style.display = 'none';
+        outroScene.classList.remove('active');
+
+        mobileScene.style.display = 'flex';
+        mobileScene.classList.add('active');
+
+        setLowerThird(
+          'device',
+          'FULL-STACK RESPONSIVE ARCHITECTURE',
+          'Pixel-Perfect Across Desktop, Tablet & Mobile',
+          'Tailwind Grid · Touch-Optimized Controls · Google Lighthouse 98+'
+        );
+
+        // Smooth scroll inside the phone iframe
+        const phoneP = (t - 35.0) / 7.0;
+        const phoneFrame = document.getElementById('phoneFrame');
+        if (phoneFrame && phoneFrame.contentWindow) {
+          phoneFrame.contentWindow.scrollTo(0, phoneP * 1800);
+        }
+
+        // Animated touch tap on phone screen
+        if (t >= 38.0 && t < 38.8) {
+          touchIndicator.style.left = '190px';
+          touchIndicator.style.top = '360px';
+          touchIndicator.classList.add('active');
+        } else {
+          touchIndicator.classList.remove('active');
+        }
+      }
+
+      // ====================================================================
+      // SCENE 6: (42.0s - 50.0s) High-Converting Fiverr Outro & Call to Action
+      // ====================================================================
+      else if (t >= 42.0) {
+        cursor.style.display = 'none';
+        cameraRig.style.display = 'none';
+        webFrame.style.display = 'none';
+        topBadge.style.display = 'none';
+        lowerThird.style.display = 'none';
+        mobileScene.style.display = 'none';
+        mobileScene.classList.remove('active');
+
+        outroScene.style.display = 'flex';
+        outroScene.classList.add('active');
+      }
+    };
+  </script>
+</body>
+</html>
