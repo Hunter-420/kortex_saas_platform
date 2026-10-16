@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kortex AI — Autonomous Multi-Agent Workspace &amp; AI SaaS Platform</title>
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Deploy autonomous multi-agent swarms that execute research, write production code, and automate complex pipelines with sub-50ms edge latency. Built by Nischal Khanal.">
+  <meta name="keywords" content="AI SaaS, autonomous agents, multi-agent orchestration, Claude 3.5 Sonnet, GPT-4o, AI web app, developer tools">
+  <meta name="author" content="Nischal Khanal">
+  <meta name="theme-color" content="#07090E">
+
+  <!-- Open Graph / Social Meta -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Kortex AI — Autonomous Multi-Agent Workspace">
+  <meta property="og:description" content="Deploy autonomous multi-agent swarms with zero prompt fatigue. Try the live in-browser AI playground.">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80">
+
+  <!-- Google Fonts Preconnect -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Official Google Identity Services SDK -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+  <!-- Schema.org Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Kortex AI",
+    "operatingSystem": "All modern web browsers",
+    "applicationCategory": "DeveloperApplication, BusinessApplication",
+    "description": "Autonomous multi-agent workspace for software engineering, SEO analysis, and automated pipeline execution.",
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.9",
+      "reviewCount": "1420"
+    },
+    "offers": [
+      {
+        "@type": "Offer",
+        "name": "Starter",
+        "price": "22.00",
+        "priceCurrency": "USD"
+      },
+      {
+        "@type": "Offer",
+        "name": "Pro Builder",
+        "price": "59.00",
+        "priceCurrency": "USD"
+      },
+      {
+        "@type": "Offer",
+        "name": "Enterprise",
+        "price": "189.00",
+        "priceCurrency": "USD"
+      }
+    ]
+  }
+  </script>
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Ambient Glow Backgrounds -->
+  <div class="ambient-glow ambient-glow-1"></div>
+  <div class="ambient-glow ambient-glow-2"></div>
+  <div class="ambient-glow ambient-glow-3"></div>
+  <div class="grid-overlay"></div>
+
+  <!-- ========================================================
+       TOP NAVIGATION BAR
+       ======================================================== -->
+  <nav class="navbar" role="navigation">
+    <div class="container navbar-inner">
+      <a href="#hero" class="brand-logo" aria-label="Kortex AI Homepage">
+        <div class="brand-mark-svg">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+          </svg>
+        </div>
+        <span class="brand-text">Kortex<span class="gradient-text">.ai</span></span>
+        <span class="brand-tag">v2.4</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="#playground">Playground</a></li>
+        <li><a href="#bento">Architecture</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+
+      <!-- Command Palette Trigger Button in Navbar -->
+      <button id="cmdPaletteTriggerBtn" class="cmd-palette-btn" aria-label="Open Command Palette">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <span>Quick search...</span>
+        <span class="kbd-shortcut">Ctrl+K</span>
+      </button>
+
+      <div class="nav-right-actions">
+        <div class="system-status-pill">
+          <span class="status-dot"></span>
+          Systems Normal &bull; 38ms
+        </div>
+
+        <div id="navUserSection" style="display: flex; align-items: center; gap: 10px;">
+          <button class="btn btn-ghost trigger-auth-modal">Sign In</button>
+          <button class="btn btn-primary trigger-auth-modal">Deploy Swarm &rarr;</button>
+        </div>
+
+        <button id="mobileToggleBtn" class="mobile-toggle" aria-label="Open Mobile Menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Drawer -->
+  <div id="mobileDrawer" class="mobile-menu-drawer">
+    <div class="mobile-drawer-header">
+      <span class="brand-text">Kortex<span class="gradient-text">.ai</span></span>
+      <button id="closeDrawerBtn" class="close-drawer-btn" aria-label="Close Menu">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    <ul class="mobile-nav-links">
+      <li><a href="#playground" class="mobile-nav-link">Live Playground</a></li>
+      <li><a href="#bento" class="mobile-nav-link">Bento Architecture</a></li>
+      <li><a href="#pricing" class="mobile-nav-link">Pricing Plans</a></li>
+      <li><a href="#faq" class="mobile-nav-link">FAQ</a></li>
+    </ul>
+    <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
+      <button class="btn btn-secondary trigger-auth-modal" style="width: 100%;">Sign In</button>
+      <button class="btn btn-primary trigger-auth-modal" style="width: 100%;">Deploy Swarm &rarr;</button>
+    </div>
+  </div>
+
+  <main>
+    <!-- ========================================================
+         HERO SECTION
+         ======================================================== -->
+    <section id="hero" class="hero-section">
+      <div class="container">
+        
+        <!-- Live Release Pill (Strictly zero emojis) -->
+        <div class="hero-release-tag">
+          <span class="pulse-tag-dot"></span>
+          <span>Kortex v2.4 Multi-Agent Engine</span>
+          <span style="opacity: 0.4;">|</span>
+          <span style="color: #FFFFFF;">Claude 3.5 Sonnet &amp; GPT-4o Ready</span>
+        </div>
+
+        <!-- Headline -->
+        <h1 class="hero-title">
+          Deploy Autonomous AI Agents.<br>
+          <span class="gradient-text">Zero Prompt Fatigue.</span>
+        </h1>
+
+        <!-- Subtitle -->
+        <p class="hero-subtitle">
+          Orchestrate self-correcting multi-agent swarms that execute market research, write production code, and automate complex pipelines with sub-50ms edge latency.
+        </p>
+
+        <!-- CTA Buttons -->
+        <div class="hero-cta-wrapper">
+          <a href="#playground" class="btn btn-primary btn-lg">
+            <span>Launch In-Browser Playground</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </a>
+          <button class="btn btn-secondary btn-lg trigger-auth-modal">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+            <span>Start Free Trial</span>
+          </button>
+        </div>
+
+        <!-- Social Proof Bar (Strictly SVG Stars, Zero Emojis) -->
+        <div class="hero-trust-bar">
+          <div class="avatar-group">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&q=80" alt="Engineer 1">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=80&q=80" alt="Engineer 2">
+            <img src="https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&w=80&q=80" alt="Engineer 3">
+            <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=80&q=80" alt="Engineer 4">
+          </div>
+          <div class="trust-text">
+            <div class="svg-star-row">
+              <svg class="svg-star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+              <svg class="svg-star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+              <svg class="svg-star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+              <svg class="svg-star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+              <svg class="svg-star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+            </div>
+            <span><strong>4.9 / 5.0</strong> rating from <strong>1,420+</strong> modern engineering teams &bull; SOC-2 Type II Validated</span>
+          </div>
+        </div>
+
+        <!-- Monochrome Grayscale Partner Grid -->
+        <div class="partner-marquee">
+          <div class="partner-tagline">Integrated with Leading AI &amp; Infrastructure Providers</div>
+          <div class="partner-logos-grid">
+            <div class="partner-logo-box">
+              <svg viewBox="0 0 24 24"><path d="M22.28 9.87a5.98 5.98 0 0 0-.52-4.93 6.05 6.05 0 0 0-4.47-2.87 6 6 0 0 0-5.18 1.48 5.98 5.98 0 0 0-4.93-.52A6.05 6.05 0 0 0 4.3 7.5a6 6 0 0 0-1.48 5.18 5.98 5.98 0 0 0 .52 4.93 6.05 6.05 0 0 0 4.47 2.87 6 6 0 0 0 5.18-1.48 5.98 5.98 0 0 0 4.93.52 6.05 6.05 0 0 0 2.87-4.47 6 6 0 0 0 1.48-5.18z"></path></svg>
+              <span>OPENAI</span>
+            </div>
+            <div class="partner-logo-box">
+              <svg viewBox="0 0 24 24"><path d="M12 2L2 19.78h20L12 2zm0 4.22l6.89 12.22H5.11L12 6.22z"></path></svg>
+              <span>VERCEL</span>
+            </div>
+            <div class="partner-logo-box">
+              <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.5v-9l6 4.5-6 4.5z"></path></svg>
+              <span>ANTHROPIC</span>
+            </div>
+            <div class="partner-logo-box">
+              <svg viewBox="0 0 24 24"><path d="M21.4 7.5c-.2-.7-.8-1.2-1.5-1.4C18.6 5.8 12 5.8 12 5.8s-6.6 0-7.9.3c-.7.2-1.3.7-1.5 1.4C2.3 8.8 2.3 12 2.3 12s0 3.2.3 4.5c.2.7.8 1.2 1.5 1.4 1.3.3 7.9.3 7.9.3s6.6 0 7.9-.3c.7-.2 1.3-.7 1.5-1.4.3-1.3.3-4.5.3-4.5s0-3.2-.3-4.5z"></path></svg>
+              <span>SUPABASE</span>
+            </div>
+            <div class="partner-logo-box">
+              <svg viewBox="0 0 24 24"><path d="M13.98 22l-1.32-6.52H8.38L9.7 22H5.32L7.96 9.38h4.28L10.92 15h4.28l1.32-5.62h4.38L18.36 22h-4.38z"></path></svg>
+              <span>STRIPE</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================================
+         TACTILE IN-BROWSER AI PLAYGROUND
+         ======================================================== -->
+    <section id="playground" class="playground-section">
+      <div class="container">
+        
+        <div style="text-align: center; margin-bottom: 36px;">
+          <div class="section-tag">// LIVE IN-BROWSER CONSOLE</div>
+          <h2 class="section-title">Experience the Multi-Agent Playground</h2>
+          <p class="section-desc" style="margin: 0 auto;">
+            Test our token streaming engine in real time. Switch between foundation models and task presets to observe deterministic, high-velocity agent execution.
+          </p>
+        </div>
+
+        <!-- Terminal Window Frame -->
+        <div class="terminal-frame">
+          
+          <!-- Terminal Header -->
+          <div class="terminal-topbar">
+            <div class="terminal-lights">
+              <span class="terminal-dot dot-red"></span>
+              <span class="terminal-dot dot-yellow"></span>
+              <span class="terminal-dot dot-green"></span>
+            </div>
+            <div class="terminal-title-center">
+              <span>kortex-runtime-v2.4</span>
+              <span id="modelIndicatorBadge" class="model-indicator-badge">Claude 3.5 Sonnet &bull; 140 t/s</span>
+            </div>
+            <div class="stream-live-pill">
+              <span class="status-dot"></span>
+              STREAMING ACTIVE
+            </div>
+          </div>
+
+          <!-- Split Body -->
+          <div class="playground-layout">
+            
+            <!-- Left Controls Sidebar -->
+            <div class="playground-controls">
+              
+              <!-- Foundation Model Picker -->
+              <div>
+                <div class="control-title-mono">Foundation Model</div>
+                <div class="model-tabs">
+                  <button class="model-tab-btn active" data-model-id="claude-3-5">
+                    <div>
+                      <div style="font-weight: 700; font-size: 13px;">Claude 3.5 Sonnet</div>
+                      <div style="font-size: 11px; color: var(--text-tertiary);">Anthropic &bull; Fast Code</div>
+                    </div>
+                    <span class="model-tab-meta">140 t/s</span>
+                  </button>
+                  <button class="model-tab-btn" data-model-id="gpt-4o">
+                    <div>
+                      <div style="font-weight: 700; font-size: 13px;">GPT-4o Omnimodal</div>
+                      <div style="font-size: 11px; color: var(--text-tertiary);">OpenAI &bull; Reasoning</div>
+                    </div>
+                    <span class="model-tab-meta">110 t/s</span>
+                  </button>
+                  <button class="model-tab-btn" data-model-id="gemini-1-5">
+                    <div>
+                      <div style="font-weight: 700; font-size: 13px;">Gemini 1.5 Pro</div>
+                      <div style="font-size: 11px; color: var(--text-tertiary);">Google &bull; 2M Window</div>
+                    </div>
+                    <span class="model-tab-meta">95 t/s</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Task Presets -->
+              <div>
+                <div class="control-title-mono">Autonomous Task Presets</div>
+                <div class="task-presets-list">
+                  <button class="task-preset-btn active" data-task-id="seo">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+                    <span>SEO &amp; Growth Strategy</span>
+                  </button>
+                  <button class="task-preset-btn" data-task-id="code">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                    <span>Code Refactor &amp; Security</span>
+                  </button>
+                  <button class="task-preset-btn" data-task-id="outreach">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                    <span>Cold Outreach Pitch</span>
+                  </button>
+                  <button class="task-preset-btn" data-task-id="sql">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+                    <span>SQL &amp; Query Optimizer</span>
+                  </button>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Right Terminal Output -->
+            <div class="playground-terminal">
+              
+              <!-- Console Metrics Toolbar -->
+              <div class="console-toolbar">
+                <div class="console-metrics">
+                  <div>Tokens: <span id="tokenCount" class="metric-highlight">0</span></div>
+                  <div>Latency: <span id="latencyVal" class="metric-highlight">238ms</span></div>
+                  <div>Verification: <span class="metric-highlight">99.4%</span></div>
+                </div>
+                <div class="console-actions">
+                  <button id="copyOutputBtn" class="console-btn" title="Copy to clipboard">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    <span>Copy</span>
+                  </button>
+                  <button id="exportJsonBtn" class="console-btn" title="Export as JSON">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    <span>JSON</span>
+                  </button>
+                  <button id="clearOutputBtn" class="console-btn" title="Clear console">
+                    <span>Clear</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Output Stream Box -->
+              <div id="consoleOutput" class="console-output-area"></div>
+
+              <!-- Prompt Input Bottom Footer -->
+              <div class="console-prompt-footer">
+                <input type="text" id="promptInput" class="prompt-input" placeholder="Type a custom prompt or click an autonomous preset..." aria-label="Playground prompt input">
+                <button id="runEngineBtn" class="btn btn-primary" style="padding: 10px 18px;">
+                  <span>Execute</span>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                  </svg>
+                </button>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================================
+         ASYMMETRIC BENTO GRID (THE MODERN SAAS STANDARD)
+         ======================================================== -->
+    <section id="bento" class="bento-section">
+      <div class="container">
+        
+        <div class="section-label-mono">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+          ENGINEERED FOR PRODUCTION RELIABILITY
+        </div>
+        <h2 class="section-heading-large">
+          Beyond Toy Wrappers.<br>
+          <span class="gradient-text">Deterministic Multi-Agent Swarms.</span>
+        </h2>
+        <p class="section-paragraph">
+          Traditional AI wrappers fail under real production load. Kortex replaces single-prompt completions with verifiable multi-agent state machines, sub-50ms edge routing, and enterprise Zero Data Retention.
+        </p>
+
+        <!-- 12-Column Asymmetric Bento Grid -->
+        <div class="bento-grid">
+          
+          <!-- Card 1: Span 8 - Visual Agent Pipeline Graph -->
+          <div class="bento-card col-8">
+            <div class="bento-card-header">
+              <div class="bento-card-tag">// 01 &bull; AGENT PIPELINE RUNTIME</div>
+              <h3 class="bento-card-title">Autonomous Micro-Task Decomposition</h3>
+              <p class="bento-card-desc">
+                Complex instructions are parsed into four deterministic phases. Subagents verify results in parallel with automatic error recovery and zero hallucination leak.
+              </p>
+            </div>
+            
+            <!-- Interactive Visual Pipeline Graph -->
+            <div class="pipeline-canvas" id="pipelineCanvas">
+              <div class="pipeline-node active" data-step="1">
+                <span class="node-step-label">Stage 01</span>
+                <span class="node-title">Intent Parser</span>
+                <span style="font-family: var(--font-mono); font-size: 10px; color: var(--accent-emerald);">Verified [OK]</span>
+              </div>
+              
+              <svg class="pipeline-connector-svg" viewBox="0 0 100 24" preserveAspectRatio="none">
+                <line x1="0" y1="12" x2="100" y2="12" stroke="rgba(0, 242, 254, 0.4)" stroke-width="2" stroke-dasharray="4 4"></line>
+              </svg>
+              
+              <div class="pipeline-node active" data-step="2">
+                <span class="node-step-label">Stage 02</span>
+                <span class="node-title">Vector Retrieval</span>
+                <span style="font-family: var(--font-mono); font-size: 10px; color: var(--accent-emerald);">Pinecone 12ms</span>
+              </div>
+              
+              <svg class="pipeline-connector-svg" viewBox="0 0 100 24" preserveAspectRatio="none">
+                <line x1="0" y1="12" x2="100" y2="12" stroke="rgba(0, 242, 254, 0.4)" stroke-width="2" stroke-dasharray="4 4"></line>
+              </svg>
+              
+              <div class="pipeline-node active" data-step="3">
+                <span class="node-step-label">Stage 03</span>
+                <span class="node-title">LLM Synthesis</span>
+                <span style="font-family: var(--font-mono); font-size: 10px; color: var(--accent-cyan);">Claude 3.5 Sonnet</span>
+              </div>
+              
+              <svg class="pipeline-connector-svg" viewBox="0 0 100 24" preserveAspectRatio="none">
+                <line x1="0" y1="12" x2="100" y2="12" stroke="rgba(0, 242, 254, 0.4)" stroke-width="2" stroke-dasharray="4 4"></line>
+              </svg>
+              
+              <div class="pipeline-node active" data-step="4">
+                <span class="node-step-label">Stage 04</span>
+                <span class="node-title">Audit &amp; Guard</span>
+                <span style="font-family: var(--font-mono); font-size: 10px; color: var(--accent-emerald);">0 Hallucinations</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2: Span 4 - Global Edge Latency Benchmark -->
+          <div class="bento-card col-4 telemetry-gauge-card">
+            <div class="bento-card-header">
+              <div class="bento-card-tag">// 02 &bull; GLOBAL TELEMETRY</div>
+              <h3 class="bento-card-title">Sub-50ms Edge Engine</h3>
+              <p class="bento-card-desc">
+                Multi-cluster edge routing shifts traffic to the closest geographical node with automatic failover.
+              </p>
+            </div>
+
+            <div class="latency-benchmark-chart">
+              <div class="latency-bar-row">
+                <div class="latency-meta">
+                  <span style="font-weight: 700; color: #FFFFFF;">Kortex Edge Network</span>
+                  <span style="font-family: var(--font-mono); color: var(--accent-cyan); font-weight: 700;">34ms</span>
+                </div>
+                <div class="latency-track">
+                  <div class="latency-fill-kortex"></div>
+                </div>
+              </div>
+
+              <div class="latency-bar-row">
+                <div class="latency-meta">
+                  <span>Standard Centralized API</span>
+                  <span style="font-family: var(--font-mono); color: var(--text-tertiary);">480ms</span>
+                </div>
+                <div class="latency-track">
+                  <div class="latency-fill-competitor"></div>
+                </div>
+              </div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); padding-top: 10px; border-top: 1px solid var(--border-hairline);">
+              <span>312 PoPs Worldwide</span>
+              <span style="color: var(--accent-emerald);">99.99% Availability</span>
+            </div>
+          </div>
+
+          <!-- Card 3: Span 4 - Enterprise Zero Data Retention -->
+          <div class="bento-card col-4">
+            <div class="bento-card-header">
+              <div class="bento-card-tag">// 03 &bull; COMPLIANCE &amp; PRIVACY</div>
+              <h3 class="bento-card-title">Zero Data Retention</h3>
+              <p class="bento-card-desc">
+                Your proprietary business data is never stored on disk, logged in plain text, or used to train foundational AI models.
+              </p>
+            </div>
+            
+            <div style="background: var(--bg-terminal); border: 1px solid var(--border-hairline); border-radius: var(--radius-sm); padding: 18px; margin-top: auto;">
+              <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-emerald)" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                <span style="font-size: 13px; font-weight: 700; color: #FFFFFF;">SOC-2 Type II Validated</span>
+              </div>
+              <div style="font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); line-height: 1.6;">
+                Audit Cert: #KRTX-SOC2-9941<br>
+                Encryption: AES-256 GCM &bull; TLS 1.3<br>
+                Data Expiry: Immediate Ephemeral Flush
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 4: Span 8 - Interactive Multi-Language SDK Switcher -->
+          <div class="bento-card col-8">
+            <div class="bento-card-header" style="margin-bottom: 10px;">
+              <div class="bento-card-tag">// 04 &bull; DEVELOPER INTEGRATION</div>
+              <h3 class="bento-card-title">Integrate Swarms in 3 Lines of Code</h3>
+              <p class="bento-card-desc">
+                First-class native SDKs for Python, TypeScript, Go, and standard cURL. Ship autonomous agents directly into existing backend services.
+              </p>
+            </div>
+
+            <!-- Interactive Code Switcher -->
+            <div class="code-switcher-box">
+              <div class="code-tabs-header">
+                <div class="code-tab-buttons" id="sdkTabButtons">
+                  <button class="code-tab-btn active" data-lang="curl">cURL</button>
+                  <button class="code-tab-btn" data-lang="python">Python</button>
+                  <button class="code-tab-btn" data-lang="typescript">TypeScript</button>
+                  <button class="code-tab-btn" data-lang="go">Go</button>
+                </div>
+                <button id="copySdkCodeBtn" class="code-copy-btn">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                  <span>Copy Code</span>
+                </button>
+              </div>
+              <pre class="code-pre-block" id="sdkCodeDisplay"><code>curl -X POST https://api.kortex.ai/v1/swarms/deploy \
+  -H "Authorization: Bearer $KORTEX_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "claude-3-5-sonnet",
+    "tasks": ["research", "generate_code", "verify_ast"],
+    "stream": true
+  }'</code></pre>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         DYNAMIC PRICING & SEATS CALCULATOR
+         ======================================================== -->
+    <section id="pricing" class="pricing-section">
+      <div class="container">
+        
+        <div class="section-tag">// TRANSPARENT INVESTMENT</div>
+        <h2 class="section-title">Simple, Predictable Plans</h2>
+        <p class="section-desc" style="margin: 0 auto 32px;">
+          Choose the capacity your team requires. Switch plans or cancel anytime with zero lock-in contracts.
+        </p>
+
+        <!-- Monthly / Annual Toggle Switch -->
+        <div class="pricing-billing-switch">
+          <span id="monthlyLabel" class="billing-label active">Monthly Billing</span>
+          <label class="switch-control" aria-label="Toggle Annual Billing">
+            <input type="checkbox" id="billingToggle">
+            <span class="slider-switch"></span>
+          </label>
+          <span id="annualLabel" class="billing-label">Annual Billing</span>
+          <span class="save-badge-green">SAVE 25%</span>
+        </div>
+
+        <!-- 3-Tier Cards Grid -->
+        <div class="pricing-cards-wrapper">
+          
+          <!-- Starter Plan -->
+          <div class="pricing-box">
+            <h3 class="p-plan-title">Starter</h3>
+            <p class="p-plan-desc">For indie engineers and rapid prototyping workflows.</p>
+            <div class="p-price-row">
+              <span class="p-currency">$</span>
+              <span id="starterPrice" class="p-amount">29</span>
+              <span class="p-cycle plan-period">/month</span>
+            </div>
+            <ul class="p-features-list">
+              <li class="p-feature-row">
+                <svg class="p-check-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>150,000 Fast Tokens / mo</span>
+              </li>
+              <li class="p-feature-row">
+                <svg class="p-check-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>Up to 3 Active Autonomous Swarms</span>
+              </li>
+              <li class="p-feature-row">
+                <svg class="p-check-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>Claude 3.5 &amp; GPT-4o Access</span>
+              </li>
+              <li class="p-feature-row">
+                <svg class="p-check-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>Standard Community Support</span>
+              </li>
+            </ul>
+            <button class="btn btn-secondary trigger-auth-modal" style="width: 100%;">Deploy Starter</button>
+          </div>
+
+          <!-- Pro Builder Plan (Popular) -->
+          <div class="pricing-box highlight">
+            <div class="popular-ribbon">ENGINEERING STANDARD</div>
+            <h3 class="p-plan-title">Pro Builder</h3>
+            <p class="p-plan-desc">For high-velocity startups shipping autonomous agent microservices.</p>
+            <div class="p-price-row">
+              <span class="p-currency">$</span>
+              <span id="proPrice" class="p-amount">79</span>
+              <span class="p-cycle plan-period">/month</span>
+            </div>
+            <ul class="p-features-list">
+              <li class="p-feature-row">
+                <svg class="p-check-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>1,200,000 High-Speed Tokens / mo</span>
+              </li>
+              <li class="p-feature-row">
+                <svg class="p-check-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>Unlimited Multi-Agent Swarms</span>
+              </li>
+              <li class="p-feature-row">
+                <svg class="p-check-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>Custom API Webhooks &amp; DB Tooling</span>
+              </li>
+              <li class="p-feature-row">
+                <svg class="p-check-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>Sub-50ms Global Priority Routing</span>
+              </li>
+              <li class="p-feature-row">
+                <svg class="p-check-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>Priority 24/7 Slack &amp; Email Support</span>
+              </li>
+            </ul>
+            <button class="btn btn-primary trigger-auth-modal" style="width: 100%;">Start 14-Day Free Pro Trial &rarr;</button>
+          </div>
+
+          <!-- Enterprise Plan -->
+          <div class="pricing-box">
+            <h3 class="p-plan-title">Enterprise</h3>
+            <p class="p-plan-desc">For mission-critical production with custom SLA and VPC isolation.</p>
+            <div class="p-price-row">
+              <span class="p-currency">$</span>
+              <span id="enterprisePrice" class="p-amount">249</span>
+              <span class="p-cycle plan-period">/month</span>
+            </div>
+            <ul class="p-features-list">
+              <li class="p-feature-row">
+                <svg class="p-check-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>Custom Volume Token Allowance</span>
+              </li>
+              <li class="p-feature-row">
+                <svg class="p-check-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>Dedicated Single-Tenant VPC</span>
+              </li>
+              <li class="p-feature-row">
+                <svg class="p-check-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>Fine-Tuned Proprietary Checkpoints</span>
+              </li>
+              <li class="p-feature-row">
+                <svg class="p-check-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>99.99% Uptime SLA Guarantee</span>
+              </li>
+              <li class="p-feature-row">
+                <svg class="p-check-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>Dedicated Solutions Architect</span>
+              </li>
+            </ul>
+            <button class="btn btn-secondary trigger-auth-modal" style="width: 100%;">Contact Solutions Architect</button>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================================
+         FREQUENTLY ASKED QUESTIONS ACCORDION
+         ======================================================== -->
+    <section id="faq" class="faq-section">
+      <div class="container">
+        
+        <div style="text-align: center; margin-bottom: 48px;">
+          <div class="section-tag">// FAQ &amp; RESOLUTIONS</div>
+          <h2 class="section-title">Frequently Asked Questions</h2>
+          <p class="section-desc" style="margin: 0 auto;">
+            Everything you need to know about our multi-agent architecture, data privacy, and integration capabilities.
+          </p>
+        </div>
+
+        <div class="faq-container">
+          
+          <div class="faq-item">
+            <button class="faq-question-btn">
+              <span>How does Kortex prevent model hallucinations?</span>
+              <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <div class="faq-answer">
+              Kortex uses a dual-agent consensus engine. The Primary Synthesis Agent executes the task, while an independent Evaluation Agent runs automated verification checks, syntax validations, and semantic sanity tests before returning the final response.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question-btn">
+              <span>Is our proprietary corporate data secure?</span>
+              <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <div class="faq-answer">
+              100% secure. Kortex operates under strict Zero Data Retention (ZDR) agreements. We never persist, cache, or use customer prompts, embeddings, or responses for foundational model training. All transmission is encrypted with TLS 1.3.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question-btn">
+              <span>Can we connect our own vector databases and APIs?</span>
+              <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <div class="faq-answer">
+              Yes. Pro and Enterprise tiers include direct webhook and API integrations with Pinecone, Supabase, Weaviate, PostgreSQL, GitHub, and custom REST/GraphQL endpoints.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question-btn">
+              <span>Can I use my existing Google or corporate email to sign up?</span>
+              <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <div class="faq-answer">
+              Yes, we support one-click Google OAuth authentication via Google Identity Services, as well as SAML 2.0 and standard email authentication.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question-btn">
+              <span>What is your cancellation and refund policy?</span>
+              <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <div class="faq-answer">
+              You can cancel your subscription at any time with a single click in your account settings. There are zero cancellation fees, and you retain full access through the end of your billing cycle.
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================================
+       COMMAND PALETTE (CTRL+K MODAL DIALOG)
+       ======================================================== -->
+  <div id="cmdPaletteModal" class="cmd-modal-backdrop" role="dialog" aria-modal="true" aria-label="Command Palette">
+    <div class="cmd-modal-window">
+      <div class="cmd-input-header">
+        <svg class="cmd-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" id="cmdSearchInput" class="cmd-search-input" placeholder="Type a command or jump to section..." autocomplete="off">
+        <span class="kbd-shortcut">ESC</span>
+      </div>
+      <div id="cmdResultsList" class="cmd-list-items">
+        <div class="cmd-item-group-title">Navigation &amp; Sections</div>
+        <div class="cmd-item-row" data-action="goto" data-target="#playground">
+          <div class="cmd-item-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+            <span>Launch Interactive Playground</span>
+          </div>
+          <span class="cmd-item-badge">Jump</span>
+        </div>
+        <div class="cmd-item-row" data-action="goto" data-target="#bento">
+          <div class="cmd-item-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+            <span>Explore Asymmetric Bento Architecture</span>
+          </div>
+          <span class="cmd-item-badge">Jump</span>
+        </div>
+        <div class="cmd-item-row" data-action="goto" data-target="#pricing">
+          <div class="cmd-item-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+            <span>Calculate Pricing &amp; ROI</span>
+          </div>
+          <span class="cmd-item-badge">Jump</span>
+        </div>
+        <div class="cmd-item-group-title">Foundation Models</div>
+        <div class="cmd-item-row" data-action="model" data-model="claude-3-5">
+          <div class="cmd-item-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+            <span>Switch to Claude 3.5 Sonnet (140 t/s)</span>
+          </div>
+          <span class="cmd-item-badge">Model</span>
+        </div>
+        <div class="cmd-item-row" data-action="model" data-model="gpt-4o">
+          <div class="cmd-item-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+            <span>Switch to GPT-4o Omnimodal (110 t/s)</span>
+          </div>
+          <span class="cmd-item-badge">Model</span>
+        </div>
+        <div class="cmd-item-row" data-action="model" data-model="gemini-1-5">
+          <div class="cmd-item-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polyline></svg>
+            <span>Switch to Gemini 1.5 Pro (95 t/s)</span>
+          </div>
+          <span class="cmd-item-badge">Model</span>
+        </div>
+        <div class="cmd-item-group-title">Authentication &amp; Actions</div>
+        <div class="cmd-item-row" data-action="auth">
+          <div class="cmd-item-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
+            <span>Open Google Identity Sign-In</span>
+          </div>
+          <span class="cmd-item-badge">Action</span>
+        </div>
+      </div>
+      <div class="cmd-modal-footer">
+        <span>Use <kbd class="kbd-shortcut">↑</kbd> <kbd class="kbd-shortcut">↓</kbd> to navigate</span>
+        <span>Press <kbd class="kbd-shortcut">ESC</kbd> to close</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       AUTHENTICATION & GOOGLE OAUTH MODAL DIALOG
+       ======================================================== -->
+  <div id="authModal" class="auth-backdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="auth-window">
+      <button id="closeAuthModalBtn" class="auth-close-x" aria-label="Close dialog">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+
+      <div style="text-align: center; margin-bottom: 24px;">
+        <div style="display: inline-flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+          <div class="brand-mark-svg">
+            <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+          </div>
+          <span class="brand-text">Kortex<span class="gradient-text">.ai</span></span>
+        </div>
+        <h3 id="modalTitle" style="font-size: 20px; font-weight: 700; margin-bottom: 6px;">Access Autonomous Workspace</h3>
+        <p style="font-size: 13px; color: var(--text-secondary);">Deploy your autonomous multi-agent swarm in seconds.</p>
+      </div>
+
+      <!-- Official Google Sign-In SDK Button Container -->
+      <div style="display: flex; justify-content: center; margin-bottom: 18px;">
+        <div id="g_id_signin"></div>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 12px; margin: 18px 0; color: var(--text-tertiary); font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em;">
+        <div style="flex: 1; height: 1px; background: var(--border-hairline);"></div>
+        <span>OR WORK EMAIL</span>
+        <div style="flex: 1; height: 1px; background: var(--border-hairline);"></div>
+      </div>
+
+      <!-- Fallback Email Auth Form -->
+      <form id="emailAuthForm">
+        <div style="margin-bottom: 14px;">
+          <label for="authEmail" style="display: block; font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px;">Work Email</label>
+          <input type="email" id="authEmail" style="width: 100%; background: #080A10; border: 1px solid var(--border-hairline); border-radius: var(--radius-xs); padding: 11px 14px; color: #FFFFFF; font-family: var(--font-sans); font-size: 14px; outline: none; transition: border-color 0.2s;" placeholder="alex@company.com" required>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px;">
+          Continue to Workspace &rarr;
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toastNotification" class="toast-bar" role="alert">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-emerald)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+    <span id="toastMessage">Workspace updated successfully</span>
+  </div>
+
+  <!-- ========================================================
+       FOOTER
+       ======================================================== -->
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      
+      <div class="footer-top-grid">
+        <div>
+          <a href="#hero" class="brand-logo">
+            <div class="brand-mark-svg">
+              <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+            </div>
+            <span class="brand-text">Kortex<span class="gradient-text">.ai</span></span>
+          </a>
+          <p class="footer-brand-desc">
+            Autonomous multi-agent workspace orchestrating Claude 3.5 Sonnet, GPT-4o, and Gemini 1.5 with sub-50ms edge latency and zero data retention.
+          </p>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Product</div>
+          <ul class="footer-link-list">
+            <li><a href="#playground">Interactive Playground</a></li>
+            <li><a href="#bento">Multi-Agent Engine</a></li>
+            <li><a href="#pricing">Pricing Plans</a></li>
+            <li><a href="#faq">Security &amp; Compliance</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Resources</div>
+          <ul class="footer-link-list">
+            <li><a href="#bento">API Documentation</a></li>
+            <li><a href="#bento">Latency Benchmarks</a></li>
+            <li><a href="#faq">SOC-2 Verification</a></li>
+            <li><a href="#hero">System Status</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Connect</div>
+          <ul class="footer-link-list">
+            <li><a href="https://www.instagram.com/nischal_khanal1/" target="_blank" rel="noopener noreferrer">Instagram (@nischal_khanal1)</a></li>
+            <li><a href="https://github.com/Hunter-420" target="_blank" rel="noopener noreferrer">GitHub (@Hunter-420)</a></li>
+            <li><a href="https://www.fiverr.com/nischalkhanal98" target="_blank" rel="noopener noreferrer">Fiverr Profile</a></li>
+            <li><a href="mailto:nischalkhanal98@gmail.com">Contact Engineering</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom-bar">
+        <div>
+          &copy; 2026 Kortex AI Inc. All rights reserved. Built with pride by <a href="https://www.fiverr.com/nischalkhanal98" target="_blank" style="color: var(--accent-cyan); font-weight: 600;">Nischal Khanal</a>.
+        </div>
+        <div style="display: flex; gap: 20px;">
+          <a href="#faq">Privacy Policy</a>
+          <a href="#faq">Terms of Service</a>
+          <a href="https://www.instagram.com/nischal_khanal1/" target="_blank">Instagram</a>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/playground.js"></script>
+  <script src="js/pricing.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
